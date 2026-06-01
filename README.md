@@ -1,6 +1,5 @@
-# Zerodha Clone
 
-A full-stack Zerodha Kite–style trading platform built for learning and portfolio demos. It includes a marketing landing site, an authenticated trading dashboard, live market quotes, order placement, and holdings that stay in sync with your trades.
+A full-stack Zerodha Trading Platform built for learning and portfolio demos. It includes a marketing landing site, an authenticated trading dashboard, live market quotes, order placement, and holdings that stay in sync with your trades.
 
 **Live repo:** [github.com/chnihal/zerodha-clone](https://github.com/chnihal/zerodha-clone)
 
@@ -58,10 +57,10 @@ cp .env.example .env
 Edit `backend/.env`:
 
 ```env
-MONGO_URL=your_mongodb_connection_string
-TOKEN_KEY=your_jwt_secret
-TWELVE_DATA_API_KEY=your_twelve_data_api_key
-CLIENT_ORIGINS=http://localhost:3000,http://localhost:3001
+MONGO_URL=your_mongodb_****
+TOKEN_KEY=your_***_secret
+TWELVE_DATA_API_KEY=your_twelve_****_api_***
+CLIENT_ORIGINS=http://localhost:****
 ```
 
 Start the API:
