@@ -116,6 +116,12 @@ Opens at **http://localhost:3000**
 - Holdings sync automatically on load and after each order.
 - Without `TWELVE_DATA_API_KEY`, the app uses cached/fallback prices from the database.
 
+## Future Improvements
+
+- Real-time stock prices
+- Portfolio analytics
+- Advanced charting
+
 ## Author
 
 **Nihal Chetlapelly** — [@chnihal](https://github.com/chnihal)
