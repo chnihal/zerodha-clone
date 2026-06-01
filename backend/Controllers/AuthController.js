@@ -45,6 +45,23 @@ module.exports.Signup = async (req, res) => {
     });
   } catch (error) {
     console.error(error);
+
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "User already exists",
+        success: false,
+      });
+    }
+
+    if (error.name === "ValidationError") {
+      return res.status(400).json({
+        message: Object.values(error.errors)
+          .map((item) => item.message)
+          .join(", "),
+        success: false,
+      });
+    }
+
     return res.status(500).json({
       message: "Signup failed",
       success: false,

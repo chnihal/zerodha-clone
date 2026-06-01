@@ -1,19 +1,30 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import Hero from "../landing_page/home/Hero";
+import { MemoryRouter } from "react-router-dom";
+import Hero from "../home/Hero";
 
 describe("Hero Component", () => {
   test("renders Hero component", () => {
-    render(<Hero />);
-    const heroImage = screen.getByAltText("Hero Image");
+    render(
+      <MemoryRouter>
+        <Hero />
+      </MemoryRouter>
+    );
+    const heroImage = screen.getByAltText("Hero");
     expect(heroImage).toBeInTheDocument();
     expect(heroImage).toHaveAttribute("src", "images/homeHero.png");
   });
-  test("renders signup button", () => {
-    render(<Hero />);
-    const signupButton = screen.getByRole("button", { name: /Sign up for free/i });
-    expect(signupButton).toBeInTheDocument();
-    expect(signupButton).toHaveClass("btn-primary");
+
+  test("renders signup link", () => {
+    render(
+      <MemoryRouter>
+        <Hero />
+      </MemoryRouter>
+    );
+    const signupLink = screen.getByRole("link", { name: /Sign up for free/i });
+    expect(signupLink).toBeInTheDocument();
+    expect(signupLink).toHaveAttribute("href", "/signup");
+    expect(signupLink).toHaveClass("btn-primary");
   });
 });
