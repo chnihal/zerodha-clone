@@ -13,42 +13,42 @@ function Footer() {
         </div>
         <div className='col'>
           <p className='fs-5'>Account</p>
-          <a>
-            <a className='text-decoration-none text-dark text-muted' href=''>Open demat account</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Minor demat account</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>NRI demat account</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>HUF demat account</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Commodity</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Dematerialisation</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Fund transfer</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>MTF</a><br/>
-          </a>
+          <div>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Open demat account</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Minor demat account</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>NRI demat account</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>HUF demat account</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Commodity</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Dematerialisation</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Fund transfer</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>MTF</a><br/>
+          </div>
         </div>
         <div className='col'>
           <p className='fs-5'>Support</p>
-          <a>
-            <a className='text-decoration-none text-dark text-muted' href=''>Contact us</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Support portal</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>How to file a complaint?</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Status of your complaints</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Bulletin</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Circular</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Z-Connect blog</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Downloads</a><br/>
-          </a>
+          <div>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Contact us</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Support portal</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>How to file a complaint?</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Status of your complaints</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Bulletin</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Circular</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Z-Connect blog</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Downloads</a><br/>
+          </div>
         </div>
         <div className='col'>
           <p className='fs-5'>Company</p>
-          <a>
-            <a className='text-decoration-none text-dark text-muted' href=''>About</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Philosophy</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Press & media</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Careers</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Zerodha Cares (CSR)</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Zerodha.tech</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Open source</a><br/>
-            <a className='text-decoration-none text-dark text-muted' href=''>Referral program</a><br/>
-          </a>
+          <div>
+            <a className='text-decoration-none text-dark text-muted' href='/'>About</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Philosophy</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Press & media</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Careers</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Zerodha Cares (CSR)</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Zerodha.tech</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Open source</a><br/>
+            <a className='text-decoration-none text-dark text-muted' href='/'>Referral program</a><br/>
+          </div>
         </div>
       </div>
       <div className="mt-5 text-muted" style={{fontSize:"12px"}}>
