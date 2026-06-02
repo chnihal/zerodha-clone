@@ -4,7 +4,7 @@ import api from "../../api/client";
 import "./Signup.css";
 
 const DASHBOARD_URL =
-  process.env.REACT_APP_DASHBOARD_URL || "http://localhost:3001";
+  process.env.REACT_APP_DASHBOARD_URL || "https://zerodha-dashboardclone.netlify.app/";
 
 function Signup() {
   const [searchParams] = useSearchParams();
