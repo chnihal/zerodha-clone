@@ -1,52 +1,107 @@
+# Zerodha Clone
 
-A full-stack Zerodha Trading Platform built for learning and portfolio demos. It includes a marketing landing site, an authenticated trading dashboard, live market quotes, order placement, and holdings that stay in sync with your trades.
+A full-stack Zerodha-inspired trading platform built for learning and portfolio demonstrations. It includes a public marketing website, an authenticated trading dashboard, live market quotes, order placement, and portfolio management with holdings synchronized from trading activity.
 
-**Live repo:** [github.com/chnihal/zerodha-clone](https://github.com/chnihal/zerodha-clone)
+## Live Demo
+
+### Landing Page
+
+https://zerodha-frontendclone.netlify.app
+
+### Trading Dashboard
+
+https://zerodha-dashboardclone.netlify.app
+
+### Backend API
+
+https://zerodha-backend-s52h.onrender.com
+
+### GitHub Repository
+
+https://github.com/chnihal/zerodha-clone
+
+---
 
 ## Features
 
-- **Landing page** — Home, products, pricing, support, and signup flows
-- **Trading dashboard** — Watchlist, holdings, positions, orders, and funds views
-- **Live market data** — NIFTY 50, SENSEX, and stock LTP via Twelve Data (with sensible fallbacks)
-- **Buy & sell** — Place orders from the watchlist; holdings rebuild from order history
-- **Orders history** — All BUY/SELL actions stored in MongoDB and shown on the Orders page
-- **Auth** — JWT-based signup, login, and session verification
+### Landing Website
 
-## Tech stack
+* Home, Products, Pricing, and Support pages
+* User Signup and Login
+* Responsive design
 
-| Layer      | Technologies                                      |
-| ---------- | ------------------------------------------------- |
-| Frontend   | React, React Router, MUI, Chart.js              |
-| Dashboard  | React, Axios, Chart.js                            |
-| Backend    | Node.js, Express, MongoDB, Mongoose, JWT        |
-| Market API | [Twelve Data](https://twelvedata.com/) (optional) |
+### Trading Dashboard
 
-## Project structure
+* Watchlist management
+* Holdings overview
+* Positions tracking
+* Orders history
+* Funds management
 
-```
+### Market Data
+
+* Live NIFTY 50 and SENSEX quotes
+* Live stock prices using Twelve Data API
+* Automatic fallback pricing when API data is unavailable
+
+### Trading Operations
+
+* Buy and Sell stocks
+* Real-time portfolio updates
+* Holdings rebuilt automatically from order history
+
+### Authentication & Security
+
+* JWT-based authentication
+* Protected dashboard routes
+* Secure password hashing with bcrypt
+
+---
+
+## Tech Stack
+
+| Layer          | Technologies                        |
+| -------------- | ----------------------------------- |
+| Frontend       | React, React Router, Bootstrap      |
+| Dashboard      | React, Material UI, Axios, Chart.js |
+| Backend        | Node.js, Express.js                 |
+| Database       | MongoDB Atlas, Mongoose             |
+| Authentication | JWT, bcryptjs                       |
+| Market Data    | Twelve Data API                     |
+| Deployment     | Netlify, Render                     |
+
+---
+
+## Project Structure
+
+```text
 zerodha-clone/
-├── frontend/     # Public marketing site (port 3000)
-├── dashboard/    # Trading dashboard UI (port 3001)
-├── backend/      # REST API (port 3002)
-└── package.json  # Shared root dependencies
+├── frontend/      # Marketing website
+├── dashboard/     # Trading dashboard
+├── backend/       # REST API
+└── package.json
 ```
+
+---
 
 ## Prerequisites
 
-- Node.js 18+
-- MongoDB Atlas (or local MongoDB)
-- Twelve Data API key (optional, for live quotes)
+* Node.js 18+
+* MongoDB Atlas account
+* Twelve Data API Key (optional)
 
-## Getting started
+---
 
-### 1. Clone the repository
+## Installation
+
+### Clone Repository
 
 ```bash
 git clone https://github.com/chnihal/zerodha-clone.git
 cd zerodha-clone
 ```
 
-### 2. Backend setup
+### Backend Setup
 
 ```bash
 cd backend
@@ -54,41 +109,42 @@ npm install
 cp .env.example .env
 ```
 
-Edit `backend/.env`:
+Configure:
 
 ```env
-MONGO_URL=your_mongodb_****
-TOKEN_KEY=your_***_secret
-TWELVE_DATA_API_KEY=your_twelve_****_api_***
-CLIENT_ORIGINS=http://localhost:****
+MONGO_URL=your_mongodb_connection_string
+TOKEN_KEY=your_jwt_secret
+TWELVE_DATA_API_KEY=your_api_key
+CLIENT_ORIGINS=http://localhost:3000,http://localhost:3001
 ```
 
-Start the API:
+Start backend:
 
 ```bash
 npm run dev
-# or: npm start
 ```
 
-Server runs at **http://localhost:3002**
+Server runs on:
 
-### 3. Dashboard setup
+```text
+http://localhost:3002
+```
+
+### Dashboard Setup
 
 ```bash
 cd dashboard
 npm install
-cp .env.example .env
-```
-
-Start the dashboard:
-
-```bash
 npm start
 ```
 
-Opens at **http://localhost:3001**
+Runs on:
 
-### 4. Landing page (optional)
+```text
+http://localhost:3001
+```
+
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -96,36 +152,67 @@ npm install
 npm start
 ```
 
-Opens at **http://localhost:3000**
+Runs on:
 
-## API overview
+```text
+http://localhost:3000
+```
 
-| Method | Endpoint           | Description                          |
-| ------ | ------------------ | ------------------------------------ |
-| GET    | `/allHoldings`     | Holdings with live prices            |
-| GET    | `/allOrders`       | Order history                        |
-| POST   | `/newOrder`        | Place BUY/SELL order                 |
-| POST   | `/syncHoldings`    | Rebuild holdings from orders         |
-| GET    | `/market/quotes`   | Live quotes for symbols              |
-| POST   | `/signup`          | Register user                        |
-| POST   | `/login`           | Login                                |
+---
 
-## Usage notes
+## API Endpoints
 
-- When buying or selling, enter a **price greater than 0** (LTP is pre-filled from the watchlist).
-- Holdings sync automatically on load and after each order.
-- Without `TWELVE_DATA_API_KEY`, the app uses cached/fallback prices from the database.
+| Method | Endpoint       | Description          |
+| ------ | -------------- | -------------------- |
+| GET    | /allHoldings   | Fetch holdings       |
+| GET    | /allOrders     | Fetch order history  |
+| POST   | /newOrder      | Place BUY/SELL order |
+| POST   | /syncHoldings  | Rebuild holdings     |
+| GET    | /market/quotes | Fetch market quotes  |
+| POST   | /signup        | Register user        |
+| POST   | /login         | Authenticate user    |
 
-## Future Improvements
+---
 
-- Real-time stock prices
-- Portfolio analytics
-- Advanced charting
+## Usage Notes
+
+* Buy and Sell orders update holdings automatically.
+* Holdings are rebuilt from order history for consistency.
+* If a Twelve Data API key is not provided, fallback prices are used.
+* Dashboard access requires authentication.
+
+---
+
+## Future Enhancements
+
+* Real-time WebSocket market feeds
+* Portfolio performance analytics
+* Advanced charting and indicators
+* Watchlist persistence
+* Trade history exports
+
+---
+
+## Screenshots
+
+* Landing Page
+* Login / Signup Page
+* Dashboard
+* Holdings View
+* Orders View
+
+---
 
 ## Author
 
-**Nihal Chetlapelly** — [@chnihal](https://github.com/chnihal)
+**Nihal Chetlapelly**
+
+GitHub: https://github.com/chnihal
+
+---
 
 ## License
 
-This project is for educational purposes. Zerodha and Kite are trademarks of their respective owners.
+This project is created for educational and portfolio purposes only.
+
+Zerodha and Kite are trademarks of their respective owners.
