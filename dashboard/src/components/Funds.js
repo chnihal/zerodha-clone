@@ -13,7 +13,7 @@ const Funds = () => {
       const resp = await api.get("/me");
       if (resp.data && resp.data.user) setMargin(resp.data.user.margin || 0);
     } catch (err) {
-      // ignore for now
+      setMessage(err.response?.data?.message || "Please log in before adding funds");
     }
   };
 
@@ -38,7 +38,7 @@ const Funds = () => {
         setMessage(resp.data?.message || "Deposit failed");
       }
     } catch (err) {
-      setMessage(err.response?.data?.message || "Deposit failed");
+      setMessage(err.response?.data?.message || err.message || "Deposit failed");
     } finally {
       setLoading(false);
     }

@@ -21,7 +21,11 @@ const cookieOptions = {
 };
 
 const getAuthenticatedUser = async (req) => {
-  const token = req.cookies?.token;
+  const authHeader = req.get?.("authorization") || "";
+  const bearerToken = authHeader.startsWith("Bearer ")
+    ? authHeader.slice("Bearer ".length).trim()
+    : "";
+  const token = bearerToken || req.cookies?.token;
 
   if (!token) {
     const error = new Error("Not authenticated");

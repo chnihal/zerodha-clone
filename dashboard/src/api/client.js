@@ -10,4 +10,31 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const TOKEN_STORAGE_KEY = "zerodhaAuthToken";
+
+const persistTokenFromUrl = () => {
+  const url = new URL(window.location.href);
+  const token = url.searchParams.get("authToken");
+
+  if (!token) {
+    return;
+  }
+
+  window.localStorage.setItem(TOKEN_STORAGE_KEY, token);
+  url.searchParams.delete("authToken");
+  window.history.replaceState({}, document.title, `${url.pathname}${url.search}${url.hash}`);
+};
+
+persistTokenFromUrl();
+
+api.interceptors.request.use((config) => {
+  const token = window.localStorage.getItem(TOKEN_STORAGE_KEY);
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  return config;
+});
+
 export default api;

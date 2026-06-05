@@ -6,6 +6,14 @@ import "./Signup.css";
 const DASHBOARD_URL =
   process.env.REACT_APP_DASHBOARD_URL || "https://zerodha-dashboardclone.netlify.app/";
 
+const buildDashboardUrl = (token) => {
+  const url = new URL(DASHBOARD_URL, window.location.origin);
+  if (token) {
+    url.searchParams.set("authToken", token);
+  }
+  return url.toString();
+};
+
 function Signup() {
   const [searchParams] = useSearchParams();
   const [isLogin, setIsLogin] = useState(
@@ -104,7 +112,7 @@ function Signup() {
       );
 
       setTimeout(() => {
-        window.location.href = DASHBOARD_URL;
+        window.location.href = buildDashboardUrl(response.data.token);
       }, 800);
     } catch (err) {
       const message =
