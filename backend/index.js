@@ -7,6 +7,7 @@ const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const authRoute = require("./Routes/AuthRoute");
 const { getMarketQuotes } = require("./services/marketDataService");
+const { getAuthenticatedUser } = require("./util/auth");
 const { enrichHoldingWithQuote } = require("./services/holdingsService");
 const {
   normalizeSymbol,
@@ -21,7 +22,13 @@ const PORT = process.env.PORT || 3002;
 const uri = process.env.MONGO_URL;
 
 const app = express();
-const allowedOrigins = (process.env.CLIENT_ORIGINS || "http://localhost:3000,http://localhost:3001")
+const defaultClientOrigins = [
+  "http://localhost:3000",
+  "http://localhost:3001",
+  "https://zerodha-clone-frontend.netlify.app",
+  "https://zerodha-dashboardclone.netlify.app",
+];
+const allowedOrigins = (process.env.CLIENT_ORIGINS || defaultClientOrigins.join(","))
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
@@ -293,6 +300,7 @@ app.post("/syncHoldings", async (req, res) => {
 
 app.post("/newOrder", async (req, res) => {
   try {
+    const user = await getAuthenticatedUser(req);
     const { mode } = req.body;
     const name = normalizeSymbol(req.body.name);
     const qty = Number(req.body.qty);
@@ -312,6 +320,12 @@ app.post("/newOrder", async (req, res) => {
       return res.status(400).json({ error: "Order mode must be BUY or SELL" });
     }
 
+    const orderValue = qty * price;
+
+    if (normalizedMode === "BUY" && (Number(user.margin) || 0) < orderValue) {
+      return res.status(400).json({ error: "Insufficient account balance" });
+    }
+
     if (normalizedMode === "SELL") {
       await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel);
       const holding = await HoldingsModel.findOne({ name });
@@ -326,14 +340,23 @@ app.post("/newOrder", async (req, res) => {
       qty,
       price,
       mode: normalizedMode,
+      userId: user._id,
     });
+
+    user.margin =
+      normalizedMode === "BUY"
+        ? (Number(user.margin) || 0) - orderValue
+        : (Number(user.margin) || 0) + orderValue;
+    await user.save();
 
     await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel);
 
-    res.json({ message: "Order saved!", order: newOrder });
+    res.json({ message: "Order saved!", order: newOrder, margin: user.margin });
   } catch (error) {
     console.error("Order placement failed:", error.message);
-    res.status(500).json({ error: "Failed to place order" });
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Failed to place order" });
   }
 });
 

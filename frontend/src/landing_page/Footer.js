@@ -71,6 +71,19 @@ function Footer() {
         <p>Fixed deposit products offered on this platform are third-party products (TPP) and are not Exchange traded products. These are offered through Blostem Fintech Private Limited. Zerodha Broking Limited (SEBI Registration No.: INZ000031633) is acting solely as a distributor for these products. Any disputes arising with respect to such distribution activity will not have access to SEBI SCORES/ODR, Exchange Investor Grievance Redressal Forum, or Arbitration mechanism. Fixed deposits are regulated by the Reserve Bank of India (RBI).</p>
       </div>
     </div>
+    <hr />
+
+    <p className="text-center text-muted">
+      Developed by Nihal Chetlapelly |
+      <a
+        href="https://github.com/YOUR_GITHUB_USERNAME/zerodha-clone"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="ms-2"
+      >
+        https://github.com/chnihal/zerodha-clone
+      </a>
+    </p>
     </footer>
    );
 }

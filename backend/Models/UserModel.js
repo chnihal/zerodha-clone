@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Your password is required"],
   },
+  margin: {
+    type: Number,
+    default: 10000,
+  },
   createdAt: {
     type: Date,
     default: new Date(),

@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
+const FRONTEND_HOME = process.env.REACT_APP_FRONTEND_HOME || "http://localhost:3000";
+
 const Menu = () => {
   const [selectedMenu, setSelectedMenu] = useState(0);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
@@ -45,9 +47,15 @@ const Menu = () => {
           </li>
         </ul>
         <hr />
-        <div className="profile" onClick={handleProfileClick}>
+        <div className="profile" onClick={handleProfileClick} style={{position: 'relative', cursor: 'pointer'}}>
           <div className="avatar">ZU</div>
           <p className="username">USERID</p>
+          {isProfileDropdownOpen && (
+            <div className="profile-dropdown" style={{position: 'absolute', right: 0, top: '110%', background: '#fff', boxShadow: '0 6px 12px rgba(0,0,0,0.08)', borderRadius: 6, padding: '0.5rem', zIndex: 50}}>
+              <Link to="/" style={{display: 'block', padding: '0.5rem 1rem', color: '#333', textDecoration: 'none'}}>Profile</Link>
+              <a href={FRONTEND_HOME} style={{display: 'block', padding: '0.5rem 1rem', color: '#333', textDecoration: 'none'}}>Logout</a>
+            </div>
+          )}
         </div>
       </div>
     </div>

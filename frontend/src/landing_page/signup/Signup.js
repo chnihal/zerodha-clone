@@ -17,6 +17,7 @@ function Signup() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [initialMargin, setInitialMargin] = useState("10000");
 
   useEffect(() => {
     setIsLogin(searchParams.get("mode") === "login");
@@ -41,6 +42,14 @@ function Signup() {
     if (!isLogin && !username.trim()) {
       setError("Username is required.");
       return false;
+    }
+
+    if (!isLogin) {
+      const margin = Number(initialMargin);
+      if (!Number.isFinite(margin) || margin <= 0) {
+        setError("Initial margin is required and must be greater than zero.");
+        return false;
+      }
     }
 
     if (password.length < 6) {
@@ -69,9 +78,17 @@ function Signup() {
 
     try {
       const endpoint = isLogin ? "/login" : "/signup";
-      const payload = isLogin
-        ? { email: email.trim(), password }
-        : { username: username.trim(), email: email.trim(), password };
+      let payload;
+      if (isLogin) {
+        payload = { email: email.trim(), password };
+      } else {
+        payload = {
+          username: username.trim(),
+          email: email.trim(),
+          password,
+          initialMargin: Number(initialMargin),
+        };
+      }
 
       const response = await api.post(endpoint, payload);
 
@@ -123,6 +140,17 @@ function Signup() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
+              />
+              <label htmlFor="initialMargin">Initial Margin</label>
+              <input
+                id="initialMargin"
+                type="number"
+                placeholder="10000"
+                value={initialMargin}
+                onChange={(e) => setInitialMargin(e.target.value)}
+                min="1"
+                step="1"
+                required
               />
             </>
           )}
