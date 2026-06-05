@@ -1,11 +1,15 @@
 import React from "react";
 import { useHoldingsData } from "../hooks/useHoldingsData";
+import { useUserData } from "../hooks/useUserData";
 import { formatCompactINR } from "../utils/holdingsSummary";
 
 const Summary = () => {
   const { loading, summary } = useHoldingsData();
+  const { user } = useUserData();
   const pnlClass = summary.totalPnl >= 0 ? "profit" : "loss";
   const pnlSign = summary.totalPnl >= 0 ? "+" : "";
+  const margin = Number(user?.margin) || 0;
+  const username = user?.username || "User";
 
   if (loading && summary.count === 0) {
     return <p>Loading dashboard...</p>;
@@ -14,7 +18,7 @@ const Summary = () => {
   return (
     <>
       <div className="username">
-        <h6>Hi, User!</h6>
+        <h6>Hi, {username}!</h6>
         <hr className="divider" />
       </div>
 
@@ -25,7 +29,7 @@ const Summary = () => {
 
         <div className="data">
           <div className="first">
-            <h3>{formatCompactINR(summary.currentValue)}</h3>
+            <h3>{formatCompactINR(margin)}</h3>
             <p>Margin available</p>
           </div>
           <hr />
@@ -36,7 +40,7 @@ const Summary = () => {
             </p>
             <p>
               Opening balance{" "}
-              <span>{formatCompactINR(summary.totalInvestment)}</span>
+              <span>{formatCompactINR(margin)}</span>
             </p>
           </div>
         </div>

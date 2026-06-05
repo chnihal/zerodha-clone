@@ -26,6 +26,7 @@ const defaultClientOrigins = [
   "http://localhost:3000",
   "http://localhost:3001",
   "https://zerodha-clone-frontend.netlify.app",
+  "https://zerodha-frontendclone.netlify.app",
   "https://zerodha-dashboardclone.netlify.app",
 ];
 const configuredClientOrigins = (process.env.CLIENT_ORIGINS || "")
@@ -227,17 +228,18 @@ const mergeDuplicateHoldings = (holdings) => {
 
   holdings.forEach((holding) => {
     const data = holding.toObject ? holding.toObject() : holding;
+    const { _id, ...holdingData } = data;
 
-    if (!mergedByName[data.name]) {
-      mergedByName[data.name] = { ...data };
+    if (!mergedByName[holdingData.name]) {
+      mergedByName[holdingData.name] = { ...holdingData };
       return;
     }
 
-    const existing = mergedByName[data.name];
-    const totalQty = existing.qty + data.qty;
+    const existing = mergedByName[holdingData.name];
+    const totalQty = existing.qty + holdingData.qty;
     existing.avg =
       totalQty > 0
-        ? (existing.avg * existing.qty + data.avg * data.qty) / totalQty
+        ? (existing.avg * existing.qty + holdingData.avg * holdingData.qty) / totalQty
         : existing.avg;
     existing.qty = totalQty;
   });
@@ -246,39 +248,53 @@ const mergeDuplicateHoldings = (holdings) => {
 };
 
 app.get("/allHoldings", async (req, res) => {
-  let allHoldings = await HoldingsModel.find({});
+  try {
+    const user = await getAuthenticatedUser(req);
+    let allHoldings = await HoldingsModel.find({ userId: user._id });
 
-  if (allHoldings.length > 0) {
-    const mergedHoldings = mergeDuplicateHoldings(allHoldings);
+    if (allHoldings.length > 0) {
+      const mergedHoldings = mergeDuplicateHoldings(allHoldings);
 
-    if (mergedHoldings.length !== allHoldings.length) {
-      await HoldingsModel.deleteMany({});
-      await HoldingsModel.insertMany(mergedHoldings);
-      allHoldings = await HoldingsModel.find({});
+      if (mergedHoldings.length !== allHoldings.length) {
+        await HoldingsModel.deleteMany({ userId: user._id });
+        await HoldingsModel.insertMany(mergedHoldings);
+        allHoldings = await HoldingsModel.find({ userId: user._id });
+      }
     }
+    const fallbackRecords = Object.fromEntries(
+      allHoldings.map((holding) => [holding.name, holding.toObject()])
+    );
+    const quotes = await getMarketQuotes(
+      allHoldings.map((holding) => holding.name),
+      fallbackRecords
+    );
+    const quoteBySymbol = Object.fromEntries(
+      quotes.map((quote) => [quote.symbol, quote])
+    );
+
+    const holdingsWithLivePrices = allHoldings.map((holding) => {
+      const quote = quoteBySymbol[holding.name];
+      return enrichHoldingWithQuote(holding, quote);
+    });
+
+    res.json(holdingsWithLivePrices);
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Failed to load holdings" });
   }
-  const fallbackRecords = Object.fromEntries(
-    allHoldings.map((holding) => [holding.name, holding.toObject()])
-  );
-  const quotes = await getMarketQuotes(
-    allHoldings.map((holding) => holding.name),
-    fallbackRecords
-  );
-  const quoteBySymbol = Object.fromEntries(
-    quotes.map((quote) => [quote.symbol, quote])
-  );
-
-  const holdingsWithLivePrices = allHoldings.map((holding) => {
-    const quote = quoteBySymbol[holding.name];
-    return enrichHoldingWithQuote(holding, quote);
-  });
-
-  res.json(holdingsWithLivePrices);
 });
 
 app.get("/allOrders", async (req, res) => {
-  const allOrders = await OrdersModel.find({}).sort({ createdAt: -1 });
-  res.json(allOrders);
+  try {
+    const user = await getAuthenticatedUser(req);
+    const allOrders = await OrdersModel.find({ userId: user._id }).sort({ createdAt: -1 });
+    res.json(allOrders);
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Failed to load orders" });
+  }
 });
 
 app.get("/market/quotes", async (req, res) => {
@@ -292,18 +308,28 @@ app.get("/market/quotes", async (req, res) => {
 });
 
 app.get("/allPositions", async (req, res) => {
-  let allPositions = await PositionsModel.find({});
-  res.json(allPositions);
+  try {
+    const user = await getAuthenticatedUser(req);
+    const allPositions = await PositionsModel.find({ userId: user._id });
+    res.json(allPositions);
+  } catch (error) {
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Failed to load positions" });
+  }
 });
 
 app.post("/syncHoldings", async (req, res) => {
   try {
-    await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel);
-    const holdings = await HoldingsModel.find({});
+    const user = await getAuthenticatedUser(req);
+    await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel, user._id);
+    const holdings = await HoldingsModel.find({ userId: user._id });
     res.json({ message: "Holdings synced from orders", count: holdings.length });
   } catch (error) {
     console.error("Holdings sync failed:", error.message);
-    res.status(500).json({ error: "Failed to sync holdings" });
+    res
+      .status(error.statusCode || 500)
+      .json({ error: error.message || "Failed to sync holdings" });
   }
 });
 
@@ -336,8 +362,8 @@ app.post("/newOrder", async (req, res) => {
     }
 
     if (normalizedMode === "SELL") {
-      await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel);
-      const holding = await HoldingsModel.findOne({ name });
+      await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel, user._id);
+      const holding = await HoldingsModel.findOne({ name, userId: user._id });
 
       if (!holding || holding.qty < qty) {
         return res.status(400).json({ error: "Insufficient quantity to sell" });
@@ -358,7 +384,7 @@ app.post("/newOrder", async (req, res) => {
         : (Number(user.margin) || 0) + orderValue;
     await user.save();
 
-    await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel);
+    await rebuildHoldingsFromOrders(HoldingsModel, OrdersModel, user._id);
 
     res.json({ message: "Order saved!", order: newOrder, margin: user.margin });
   } catch (error) {

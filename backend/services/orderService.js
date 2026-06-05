@@ -7,10 +7,13 @@ const normalizeSymbol = (name) => {
   return symbolAliases[normalized] || normalized;
 };
 
-const rebuildHoldingsFromOrders = async (HoldingsModel, OrdersModel) => {
-  const orders = await OrdersModel.find({}).sort({ createdAt: 1 });
+const buildUserFilter = (userId) => (userId ? { userId } : {});
+
+const rebuildHoldingsFromOrders = async (HoldingsModel, OrdersModel, userId) => {
+  const filter = buildUserFilter(userId);
+  const orders = await OrdersModel.find(filter).sort({ createdAt: 1 });
   const positions = {};
-  const existingHoldings = await HoldingsModel.find({});
+  const existingHoldings = await HoldingsModel.find(filter);
   const existingByName = Object.fromEntries(
     existingHoldings.map((holding) => [holding.name, holding.toObject()])
   );
@@ -53,7 +56,7 @@ const rebuildHoldingsFromOrders = async (HoldingsModel, OrdersModel) => {
     }
   });
 
-  await HoldingsModel.deleteMany({});
+  await HoldingsModel.deleteMany(filter);
 
   const holdingsToInsert = Object.entries(positions)
     .filter(([, position]) => position.qty > 0)
@@ -67,6 +70,7 @@ const rebuildHoldingsFromOrders = async (HoldingsModel, OrdersModel) => {
         price: existing?.price ?? position.avg,
         net: existing?.net ?? "0.00%",
         day: existing?.day ?? "0.00%",
+        userId,
       };
     });
 
