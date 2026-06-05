@@ -28,14 +28,23 @@ const defaultClientOrigins = [
   "https://zerodha-clone-frontend.netlify.app",
   "https://zerodha-dashboardclone.netlify.app",
 ];
-const allowedOrigins = (process.env.CLIENT_ORIGINS || defaultClientOrigins.join(","))
+const configuredClientOrigins = (process.env.CLIENT_ORIGINS || "")
   .split(",")
   .map((origin) => origin.trim())
   .filter(Boolean);
+const allowedOrigins = Array.from(
+  new Set([...defaultClientOrigins, ...configuredClientOrigins])
+);
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error(`CORS blocked origin: ${origin}`));
+    },
     credentials: true,
   })
 );
